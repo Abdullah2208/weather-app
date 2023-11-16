@@ -1,14 +1,21 @@
 import './App.css';
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 function App() {
+    const [weather, setWeather] = useState(null);
     const apiKey = 'SiPVszgovu6aFy5pYecgwyi8szDKfZM3';
     const city = 'Lahore';
 
     useEffect(() => {
         const fetchData = async () => {
-            const locationKey = fetchLocationKey();
-            const currentWeather = fetchCurrentWeather(locationKey);
+            try {
+                const locationKey = await fetchLocationKey();
+                const currentWeather = await fetchCurrentWeather(locationKey);
+                setWeather(currentWeather[0])
+            } catch(error) {
+                console.log('Error while fetching data: ', error)
+            }
+
         }
         const fetchLocationKey = async () => {
             try {
@@ -18,7 +25,8 @@ function App() {
                 console.log(locationkey);
                 return locationkey;
             } catch(error) {
-                console.log("Error while fetching locationKey: ", error)
+                console.log("Error while fetching locationKey: ", error);
+                throw error;
             }}
         
             const fetchCurrentWeather = async (locationKey) => {
@@ -28,7 +36,8 @@ function App() {
                     console.log(data);
                     return data
                 } catch (error) {
-                    console.log("error while fetching weather: ", error)
+                    console.log("error while fetching weather: ", error);
+                    throw error
                 }
             }
 
@@ -37,7 +46,12 @@ function App() {
 
 
      return (
-    <p></p>
+        <div>
+            {weather && <div>
+                {weather.WeatherText} <br/>
+                {weather.Temperature.Metric.Value}
+                </div>}
+        </div>
     );
 }
 
